@@ -1,33 +1,37 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Productbeschrijving Generator</title>
-    <script src="https://cdn.jsdelivr.net/npm/openai"></script>
 </head>
 <body>
     <h1>Productbeschrijving Generator</h1>
-    <input type="text" id="productNaam" placeholder="Voer de productnaam in">
-    <button onclick="genereerProductbeschrijving()">Genereer Productbeschrijving</button>
+    <label for="productNaam">Voer de productnaam in:</label>
+    <input type="text" id="productNaam">
+    <button onclick="genereerBeschrijving()">Genereer Productbeschrijving</button>
+    <p>Productbeschrijving:</p>
     <p id="productBeschrijving"></p>
-
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        const apiKey = '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'; // Vervang dit door je OpenAI API-sleutel
+        function genereerBeschrijving() {
+            const productNaam = document.getElementById("productNaam").value;
 
-        async function genereerProductbeschrijving() {
-            const productNaam = document.getElementById('productNaam').value;
-
-            const openai = new OpenAIApi({ key: apiKey });
-            const prompt = `Schrijf een productbeschrijving voor een productpagina van een ${productNaam}.
-                            de tekst moet 200 woorden hebben en een goede SEO score behalen.
-                            ook is het belangrijk dat er geen spel en formuleerfouten in zitten.`;
-
-            const result = await openai.createCompletion({
-                prompt,
-                max_tokens: 200
+            $.ajax({
+                type: "POST",
+                url: 'https://api.openai.com/v1/engines/davinci-codex/completions',
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("Authorization", "Bearer <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>");
+                },
+                data: JSON.stringify({
+                    prompt: `Genereer een productbeschrijving voor een product met de naam: ${productNaam}. De beschrijving moet informatief en aantrekkelijk zijn, en moet ongeveer 200 woorden bevatten.`
+                }),
+                contentType: 'application/json',
+                success: function (response) {
+                    const beschrijving = response.choices[0].text;
+                    document.getElementById("productBeschrijving").textContent = beschrijving;
+                }
             });
-
-            const productBeschrijving = result.choices[0].text;
-            document.getElementById('productBeschrijving').textContent = productBeschrijving;
         }
     </script>
 </body>
