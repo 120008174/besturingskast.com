@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Productbeschrijving Generator</title>
+    <script src="https://cdn.jsdelivr.net/npm/openai"></script>
+</head>
+<body>
+    <h1>Productbeschrijving Generator</h1>
+    <input type="text" id="productNaam" placeholder="Voer de productnaam in">
+    <button onclick="genereerProductbeschrijving()">Genereer Productbeschrijving</button>
+    <p id="productBeschrijving"></p>
+
+    <script>
+        const apiKey = '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'; // Vervang dit door je OpenAI API-sleutel
+
+        async function genereerProductbeschrijving() {
+            const productNaam = document.getElementById('productNaam').value;
+
+            const openai = new OpenAIApi({ key: apiKey });
+            const prompt = `Schrijf een productbeschrijving voor een productpagina van een ${productNaam}.
+                            de tekst moet 200 woorden hebben en een goede SEO score behalen.
+                            ook is het belangrijk dat er geen spel en formuleerfouten in zitten.`;
+
+            const result = await openai.createCompletion({
+                prompt,
+                max_tokens: 200
+            });
+
+            const productBeschrijving = result.choices[0].text;
+            document.getElementById('productBeschrijving').textContent = productBeschrijving;
+        }
+    </script>
+</body>
+</html>
